@@ -2,6 +2,18 @@
 <html lang="en" data-theme="light">
   <head>
     <meta charset="UTF-8" />
+    <!-- Apply stored/preferred theme before first paint to avoid a flash of the wrong theme -->
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem('theme');
+          if (t !== 'dark' && t !== 'light') {
+            t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          }
+          document.documentElement.setAttribute('data-theme', t);
+        } catch (e) {}
+      })();
+    </script>
     <link rel="icon" type="image/webp" href="/derekhuynen/dh100.webp" />
     <link rel="apple-touch-icon" href="/derekhuynen/avatar_derek-min.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -16,13 +28,13 @@
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Derek Huynen - Senior AI Engineer & Full-Stack Developer" />
     <meta property="og:description" content="Senior AI Engineer & Full-Stack Developer building production Generative AI systems and leading cross-platform teams." />
-    <meta property="og:image" content="/derekhuynen/avatar_derek-min.png" />
+    <meta property="og:image" content="https://derekhuynen.com/derekhuynen/avatar_derek-min.png" />
     <meta property="og:url" content="https://derekhuynen.com" />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Derek Huynen - Senior AI Engineer & Full-Stack Developer" />
     <meta name="twitter:description" content="Senior AI Engineer & Full-Stack Developer building production Generative AI systems and leading cross-platform teams." />
-    <meta name="twitter:image" content="/derekhuynen/avatar_derek-min.png" />
+    <meta name="twitter:image" content="https://derekhuynen.com/derekhuynen/avatar_derek-min.png" />
 
     <script type="application/ld+json">
       {
@@ -85,7 +97,10 @@
           </div>
         </div>
         <div class="hero-image reveal">
-          <img src="/derekhuynen/avatar_derek-min.png" alt="Illustrated avatar of Derek Huynen" width="1024" height="1536" decoding="async" fetchpriority="high" />
+          <picture>
+            <source srcset="/derekhuynen/avatar_derek-min.webp" type="image/webp" />
+            <img src="/derekhuynen/avatar_derek-min.png" alt="Illustrated avatar of Derek Huynen" width="1024" height="1536" decoding="async" fetchpriority="high" />
+          </picture>
         </div>
       </section>
 

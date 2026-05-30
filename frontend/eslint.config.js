@@ -12,4 +12,11 @@ export default tseslint.config(
       globals: globals.browser,
     },
   },
+  {
+    // Tests and build config run in Node, not the browser.
+    files: ['tests/**/*.ts', '**/*.config.ts'],
+    languageOptions: {
+      globals: globals.node,
+    },
+  },
 )

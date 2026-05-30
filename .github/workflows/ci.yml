@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
+    types: [opened, synchronize, reopened, closed]
     branches: [main]
 
 permissions:
@@ -12,6 +13,8 @@ permissions:
 jobs:
   quality:
     name: Lint, build, test (Playwright + axe)
+    # Run on push and on open/sync/reopen PRs; skip on PR close (nothing to test).
+    if: github.event_name != 'pull_request' || github.event.action != 'closed'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -50,3 +53,42 @@ jobs:
           name: playwright-report
           path: frontend/playwright-report/
           retention-days: 14
+
+  deploy:
+    name: Build and deploy (Azure Static Web Apps)
+    # Gated on quality: a push or PR only deploys after lint/build/tests pass.
+    needs: quality
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+          lfs: false
+      - name: Build And Deploy
+        id: builddeploy
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APP }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: 'upload'
+          app_location: './frontend'
+          api_location: ''
+          output_location: 'dist'
+
+  close_pull_request:
+    name: Close pull request (Azure Static Web Apps)
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Close Pull Request
+        id: closepullrequest
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APP }}
+          action: 'close'

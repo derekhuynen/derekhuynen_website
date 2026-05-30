@@ -13,6 +13,9 @@ export default defineConfig({
   use: {
     baseURL,
     trace: 'on-first-retry',
+    // Settle entrance (.reveal) animations instantly so axe measures the
+    // final, settled colors rather than a mid-fade blend (flaky contrast).
+    reducedMotion: 'reduce',
   },
   projects: [
     { name: 'desktop', use: { ...devices['Desktop Chrome'] } },

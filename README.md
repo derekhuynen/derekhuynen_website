@@ -14,6 +14,8 @@
 ![Playwright](https://img.shields.io/badge/Playwright-tested-2EAD33?style=flat-square&logo=playwright&logoColor=white)
 ![Azure Static Web Apps](https://img.shields.io/badge/Azure-Static%20Web%20Apps-0078D4?style=flat-square&logo=microsoftazure&logoColor=white)
 
+![derekhuynen.com landing page](docs/images/site.png)
+
 </div>
 
 ---
@@ -35,6 +37,23 @@
 | Hosting | Azure Static Web Apps, deployed from GitHub Actions on push to `main` |
 | Testing | Playwright (smoke + e2e) and `@axe-core/playwright` (accessibility) |
 | Quality gates | ESLint, Lighthouse CI, CodeQL, Dependabot |
+
+## Architecture and delivery
+
+A static single-page app with no runtime backend: every push to `main` runs the full quality suite, and only a green run is allowed to deploy.
+
+```mermaid
+flowchart LR
+    DEV["git push / PR<br/>(main)"] --> CI
+    subgraph CI["GitHub Actions"]
+        LINT["lint + build"]
+        TEST["Playwright + axe"]
+        LH["Lighthouse budgets"]
+        CQL["CodeQL"]
+    end
+    CI -->|"all gates pass"| SWA["Azure Static Web Apps<br/>CSP/HSTS headers, WebP"]
+    SWA --> USERS([Visitors])
+```
 
 ## Project layout
 
@@ -84,3 +103,7 @@ Every push and pull request runs the full quality suite, and deployment is gated
 - Email: [derek.huynen@gmail.com](mailto:derek.huynen@gmail.com)
 - LinkedIn: [linkedin.com/in/derekhuynen](https://www.linkedin.com/in/derekhuynen/)
 - GitHub: [github.com/derekhuynen](https://github.com/derekhuynen)
+
+## License
+
+[MIT](LICENSE) (c) Derek Huynen
